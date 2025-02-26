@@ -168,7 +168,7 @@ export default function ThemeStitcher(): JSX.Element {
                 </div>
               ) : (
                 <div>
-                  <label className="cursor-pointer inline-block bg-[#11b1b4] hover:bg-[oklch(65.3_0.1154_197)] dark:bg-[#2bbdc0] dark:hover:bg-[oklch(69.2_0.1156_197.1)] text-white px-4 py-2 rounded-md">
+                  <label className="cursor-pointer inline-block bg-[#11b1b4] hover:bg-[#00A5A8] dark:bg-[#2bbdc0] dark:hover:bg-[#11B1B4] text-white px-4 py-2 rounded-md">
                     Select Image
                     <input
                       type="file"
@@ -196,7 +196,7 @@ export default function ThemeStitcher(): JSX.Element {
                 </div>
               ) : (
                 <div>
-                  <label className="cursor-pointer inline-block bg-[#11b1b4] hover:bg-[oklch(65.3_0.1154_197)] dark:bg-[#2bbdc0] dark:hover:bg-[oklch(69.2_0.1156_197.1)] text-white px-4 py-2 rounded-md">
+                  <label className="cursor-pointer inline-block bg-[#11b1b4] hover:bg-[#00A5A8] dark:bg-[#2bbdc0] dark:hover:bg-[#11B1B4] text-white px-4 py-2 rounded-md">
                     Select Image
                     <input
                       type="file"
@@ -217,7 +217,7 @@ export default function ThemeStitcher(): JSX.Element {
               className={`px-6 py-2 rounded-lg ${
                 !lightImage || !darkImage
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-[#11b1b4] hover:bg-[oklch(65.3_0.1154_197)] dark:bg-[#2bbdc0] dark:hover:bg-[oklch(69.2_0.1156_197.1)] text-white'
+                  : 'bg-[#11b1b4] hover:bg-[#00A5A8] dark:bg-[#2bbdc0] dark:hover:bg-[#11B1B4] text-white'
               }`}
             >
               Next: Crop Images
@@ -262,7 +262,7 @@ export default function ThemeStitcher(): JSX.Element {
               className={`px-6 py-2 rounded-lg ${
                 isProcessing
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-[#11b1b4] hover:bg-[oklch(65.3_0.1154_197)] dark:bg-[#2bbdc0] dark:hover:bg-[oklch(69.2_0.1156_197.1)] text-white'
+                  : 'bg-[#11b1b4] hover:bg-[#00A5A8] dark:bg-[#2bbdc0] dark:hover:bg-[#11B1B4] text-white'
               }`}
             >
               {isProcessing ? 'Cropping...' : 'Crop Both Images'}
@@ -384,7 +384,7 @@ export default function ThemeStitcher(): JSX.Element {
               className={`px-6 py-2 rounded-lg ${
                 isProcessing
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-[#11b1b4] hover:bg-[oklch(65.3_0.1154_197)] dark:bg-[#2bbdc0] dark:hover:bg-[oklch(69.2_0.1156_197.1)] text-white'
+                  : 'bg-[#11b1b4] hover:bg-[#00A5A8] dark:bg-[#2bbdc0] dark:hover:bg-[#11B1B4] text-white'
               }`}
             >
               {isProcessing ? 'Stitching...' : 'Stitch Images'}
@@ -411,20 +411,20 @@ export default function ThemeStitcher(): JSX.Element {
           <div className="flex justify-between">
             <button
               onClick={() => setStep(3)}
-              className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100"
+              className="px-4 py-2 rounded-lg border border-[#373A39] hover:border-[#454847]"
             >
               Back
             </button>
             <div className="space-x-4">
               <button
                 onClick={resetTool}
-                className="px-6 py-2 bg-[#ebeeec] hover:bg-[oklch(65.3_0.1154_197)] dark:hover:bg-[oklch(69.2_0.1156_197.1)] text-black rounded-lg"
+                className="px-6 py-2 bg-[#EBEEEC] hover:bg-[#E2E6E4] dark:bg-[#EBEEED] dark:hover:bg-[#B0B4B3] text-black rounded-lg"
               >
                 Start Over
               </button>
               <button
                 onClick={downloadImage}
-                className="px-6 py-2 bg-[#ebeeec] hover:bg-[oklch(65.3_0.1154_197)] dark:bg-[#2bbdc0] dark:hover:bg-[oklch(69.2_0.1156_197.1)] text-white rounded-lg"
+                className="px-6 py-2 bg-[#ebeeec] hover:bg-[#00A5A8] dark:bg-[#2bbdc0] dark:hover:bg-[#11B1B4] text-white rounded-lg"
               >
                 Download Image
               </button>
