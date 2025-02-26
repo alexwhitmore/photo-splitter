@@ -1,53 +1,57 @@
-import React, { useState, useRef } from 'react';
-import ImageCropper from './ImageCropper';
-import { stitchImages } from './ImageStitcher';
+import { useState, useRef, type ChangeEvent, type JSX } from 'react';
+import ImageCropper, { type ImageCropperRef } from './ImageCropper';
+import { stitchImages, type StitchDirection } from './StitchingUtilities.ts';
 
-export default function ThemeStitcher() {
-  const [lightImage, setLightImage] = useState(null);
-  const [darkImage, setDarkImage] = useState(null);
-  const [croppedLight, setCroppedLight] = useState(null);
-  const [croppedDark, setCroppedDark] = useState(null);
-  const [step, setStep] = useState(1);
-  const [splitDirection, setSplitDirection] = useState('vertical');
-  const [stitchedImage, setStitchedImage] = useState(null);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState(null);
+export default function ThemeStitcher(): JSX.Element {
+  const [lightImage, setLightImage] = useState<string | null>(null);
+  const [darkImage, setDarkImage] = useState<string | null>(null);
+  const [croppedLight, setCroppedLight] = useState<string | null>(null);
+  const [croppedDark, setCroppedDark] = useState<string | null>(null);
+  const [stitchedImage, setStitchedImage] = useState<string | null>(null);
+  const [step, setStep] = useState<number>(1);
+  const [splitDirection, setSplitDirection] = useState<StitchDirection>('vertical');
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const lightCropperRef = useRef(null);
-  const darkCropperRef = useRef(null);
+  const lightCropperRef = useRef<ImageCropperRef | null>(null);
+  const darkCropperRef = useRef<ImageCropperRef | null>(null);
 
-  const handleLightImageUpload = (e) => {
+  const handleLightImageUpload = (e: ChangeEvent<HTMLInputElement>): void => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const reader = new FileReader();
-      reader.onload = () => {
-        setLightImage(reader.result);
-        setError(null);
+      reader.onload = (event) => {
+        if (event.target && typeof event.target.result === 'string') {
+          setLightImage(event.target.result);
+          setError(null);
+        }
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleDarkImageUpload = (e) => {
+  const handleDarkImageUpload = (e: ChangeEvent<HTMLInputElement>): void => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const reader = new FileReader();
-      reader.onload = () => {
-        setDarkImage(reader.result);
-        setError(null);
+      reader.onload = (event) => {
+        if (event.target && typeof event.target.result === 'string') {
+          setDarkImage(event.target.result);
+          setError(null);
+        }
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const syncCroppers = () => {
+  const syncCroppers = (): void => {
     if (lightCropperRef.current && darkCropperRef.current) {
       const lightCropData = lightCropperRef.current.getCropData();
       darkCropperRef.current.setCropData(lightCropData);
     }
   };
 
-  const handleCrop = async () => {
+  const handleCrop = async (): Promise<void> => {
     if (lightCropperRef.current && darkCropperRef.current) {
       setIsProcessing(true);
       setError(null);
@@ -67,7 +71,7 @@ export default function ThemeStitcher() {
     }
   };
 
-  const handleStitch = async () => {
+  const handleStitch = async (): Promise<void> => {
     if (croppedLight && croppedDark) {
       setIsProcessing(true);
       setError(null);
@@ -84,7 +88,7 @@ export default function ThemeStitcher() {
     }
   };
 
-  const downloadImage = () => {
+  const downloadImage = (): void => {
     if (stitchedImage) {
       const link = document.createElement('a');
       link.download = 'theme-stitched.png';
@@ -93,7 +97,7 @@ export default function ThemeStitcher() {
     }
   };
 
-  const resetTool = () => {
+  const resetTool = (): void => {
     setLightImage(null);
     setDarkImage(null);
     setCroppedLight(null);
@@ -106,13 +110,28 @@ export default function ThemeStitcher() {
 
   return (
     <div className="space-y-8">
-      {/* Step indicator */}
-      <div className="flex justify-between mb-8">
+      <div className="flex items-center justify-between mb-8 relative">
+        <div 
+          className={`absolute h-0.5 left-0 w-1/3 top-1/2 transform -translate-y-1/2 z-0 ${
+            step >= 2 ? 'bg-[#11b1b4] dark:bg-[#2bbdc0]' : 'bg-gray-200'
+          }`}
+        ></div>
+        <div 
+          className={`absolute h-0.5 left-1/3 w-1/3 top-1/2 transform -translate-y-1/2 z-0 ${
+            step >= 3 ? 'bg-[#11b1b4] dark:bg-[#2bbdc0]' : 'bg-gray-200'
+          }`}
+        ></div>
+        <div 
+          className={`absolute h-0.5 left-2/3 w-1/3 top-1/2 transform -translate-y-1/2 z-0 ${
+            step >= 4 ? 'bg-[#11b1b4] dark:bg-[#2bbdc0]' : 'bg-gray-200'
+          }`}
+        ></div>
+        
         {[1, 2, 3, 4].map((s) => (
           <div
             key={s}
-            className={`w-8 h-8 rounded-full flex items-center justify-center ${
-              step >= s ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
+            className={`w-8 h-8 rounded-full flex items-center justify-center z-10 ${
+              step >= s ? 'bg-[#11b1b4] dark:bg-[#2bbdc0] text-white' : 'bg-gray-200 text-gray-700'
             }`}
           >
             {s}
@@ -120,14 +139,12 @@ export default function ThemeStitcher() {
         ))}
       </div>
 
-      {/* Error message */}
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
           {error}
         </div>
       )}
 
-      {/* Step 1: Upload images */}
       {step === 1 && (
         <div className="space-y-6">
           <h2 className="text-xl font-semibold">Step 1: Upload Theme Screenshots</h2>
@@ -137,7 +154,7 @@ export default function ThemeStitcher() {
 
           <div className="grid md:grid-cols-2 gap-6">
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-              <h3 className="font-medium mb-2">Light Theme</h3>
+              <h3 className="font-medium mb-2">Image one</h3>
               {lightImage ? (
                 <div>
                   <img
@@ -151,8 +168,8 @@ export default function ThemeStitcher() {
                 </div>
               ) : (
                 <div>
-                  <label className="cursor-pointer inline-block bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-                    Select Light Theme Image
+                  <label className="cursor-pointer inline-block bg-[#11b1b4] hover:bg-[oklch(65.3_0.1154_197)] dark:bg-[#2bbdc0] dark:hover:bg-[oklch(69.2_0.1156_197.1)] text-white px-4 py-2 rounded-md">
+                    Select Image
                     <input
                       type="file"
                       accept="image/*"
@@ -165,7 +182,7 @@ export default function ThemeStitcher() {
             </div>
 
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-              <h3 className="font-medium mb-2">Dark Theme</h3>
+              <h3 className="font-medium mb-2">Image two</h3>
               {darkImage ? (
                 <div>
                   <img
@@ -179,8 +196,8 @@ export default function ThemeStitcher() {
                 </div>
               ) : (
                 <div>
-                  <label className="cursor-pointer inline-block bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-                    Select Dark Theme Image
+                  <label className="cursor-pointer inline-block bg-[#11b1b4] hover:bg-[oklch(65.3_0.1154_197)] dark:bg-[#2bbdc0] dark:hover:bg-[oklch(69.2_0.1156_197.1)] text-white px-4 py-2 rounded-md">
+                    Select Image
                     <input
                       type="file"
                       accept="image/*"
@@ -200,7 +217,7 @@ export default function ThemeStitcher() {
               className={`px-6 py-2 rounded-lg ${
                 !lightImage || !darkImage
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-blue-500 text-white hover:bg-blue-600'
+                  : 'bg-[#11b1b4] hover:bg-[oklch(65.3_0.1154_197)] dark:bg-[#2bbdc0] dark:hover:bg-[oklch(69.2_0.1156_197.1)] text-white'
               }`}
             >
               Next: Crop Images
@@ -209,7 +226,6 @@ export default function ThemeStitcher() {
         </div>
       )}
 
-      {/* Step 2: Crop images */}
       {step === 2 && (
         <div className="space-y-6">
           <h2 className="text-xl font-semibold">Step 2: Crop Images Identically</h2>
@@ -220,12 +236,16 @@ export default function ThemeStitcher() {
           <div className="grid md:grid-cols-2 gap-6">
             <div className="w-full md:max-w-[50%] mx-auto">
               <h3 className="font-medium mb-2">Light Theme</h3>
-              <ImageCropper image={lightImage} ref={lightCropperRef} onCropChange={syncCroppers} />
+              {lightImage && (
+                <ImageCropper image={lightImage} ref={lightCropperRef} onCropChange={syncCroppers} />
+              )}
             </div>
 
             <div className="w-full md:max-w-[50%] mx-auto">
               <h3 className="font-medium mb-2">Dark Theme</h3>
-              <ImageCropper image={darkImage} ref={darkCropperRef} isFollower={true} />
+              {darkImage && (
+                <ImageCropper image={darkImage} ref={darkCropperRef} isFollower={true} />
+              )}
             </div>
           </div>
 
@@ -242,7 +262,7 @@ export default function ThemeStitcher() {
               className={`px-6 py-2 rounded-lg ${
                 isProcessing
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-blue-500 text-white hover:bg-blue-600'
+                  : 'bg-[#11b1b4] hover:bg-[oklch(65.3_0.1154_197)] dark:bg-[#2bbdc0] dark:hover:bg-[oklch(69.2_0.1156_197.1)] text-white'
               }`}
             >
               {isProcessing ? 'Cropping...' : 'Crop Both Images'}
@@ -251,7 +271,6 @@ export default function ThemeStitcher() {
         </div>
       )}
 
-      {/* Step 3: Stitch setup */}
       {step === 3 && (
         <div className="space-y-6">
           <h2 className="text-xl font-semibold">Step 3: Stitch Images</h2>
@@ -259,20 +278,24 @@ export default function ThemeStitcher() {
           <div className="grid md:grid-cols-2 gap-6">
             <div className="w-full md:max-w-[50%] mx-auto">
               <h3 className="font-medium mb-2">Light Theme (Cropped)</h3>
-              <img
-                src={croppedLight}
-                alt="Cropped light theme"
-                className="border border-gray-300 rounded-lg w-full object-contain"
-              />
+              {croppedLight && (
+                <img
+                  src={croppedLight}
+                  alt="Cropped light theme"
+                  className="border border-gray-300 rounded-lg w-full object-contain"
+                />
+              )}
             </div>
 
             <div className="w-full md:max-w-[50%] mx-auto">
               <h3 className="font-medium mb-2">Dark Theme (Cropped)</h3>
-              <img
-                src={croppedDark}
-                alt="Cropped dark theme"
-                className="border border-gray-300 rounded-lg w-full object-contain"
-              />
+              {croppedDark && (
+                <img
+                  src={croppedDark}
+                  alt="Cropped dark theme"
+                  className="border border-gray-300 rounded-lg w-full object-contain"
+                />
+              )}
             </div>
           </div>
 
@@ -323,6 +346,28 @@ export default function ThemeStitcher() {
                 />
                 Diagonal (Bottom-Left to Top-Right)
               </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="splitDirection"
+                  value="circle"
+                  checked={splitDirection === 'circle'}
+                  onChange={() => setSplitDirection('circle')}
+                  className="mr-2"
+                />
+                Circle (Center)
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="splitDirection"
+                  value="wave"
+                  checked={splitDirection === 'wave'}
+                  onChange={() => setSplitDirection('wave')}
+                  className="mr-2"
+                />
+                Wave (Middle)
+              </label>
             </div>
           </div>
 
@@ -339,7 +384,7 @@ export default function ThemeStitcher() {
               className={`px-6 py-2 rounded-lg ${
                 isProcessing
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-blue-500 text-white hover:bg-blue-600'
+                  : 'bg-[#11b1b4] hover:bg-[oklch(65.3_0.1154_197)] dark:bg-[#2bbdc0] dark:hover:bg-[oklch(69.2_0.1156_197.1)] text-white'
               }`}
             >
               {isProcessing ? 'Stitching...' : 'Stitch Images'}
@@ -348,18 +393,19 @@ export default function ThemeStitcher() {
         </div>
       )}
 
-      {/* Step 4: Result */}
       {step === 4 && (
         <div className="space-y-6">
           <h2 className="text-xl font-semibold">Step 4: Download Result</h2>
 
           <div className="text-center">
             <h3 className="font-medium mb-2">Stitched Image</h3>
-            <img
-              src={stitchedImage}
-              alt="Stitched theme image"
-              className="max-w-1/2 border border-gray-300 rounded-lg mx-auto object-contain"
-            />
+            {stitchedImage && (
+              <img
+                src={stitchedImage}
+                alt="Stitched theme image"
+                className="max-w-1/2 border border-gray-300 rounded-lg mx-auto object-contain"
+              />
+            )}
           </div>
 
           <div className="flex justify-between">
@@ -371,16 +417,16 @@ export default function ThemeStitcher() {
             </button>
             <div className="space-x-4">
               <button
-                onClick={downloadImage}
-                className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
-              >
-                Download Image
-              </button>
-              <button
                 onClick={resetTool}
-                className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                className="px-6 py-2 bg-[#ebeeec] hover:bg-[oklch(65.3_0.1154_197)] dark:hover:bg-[oklch(69.2_0.1156_197.1)] text-black rounded-lg"
               >
                 Start Over
+              </button>
+              <button
+                onClick={downloadImage}
+                className="px-6 py-2 bg-[#ebeeec] hover:bg-[oklch(65.3_0.1154_197)] dark:bg-[#2bbdc0] dark:hover:bg-[oklch(69.2_0.1156_197.1)] text-white rounded-lg"
+              >
+                Download Image
               </button>
             </div>
           </div>

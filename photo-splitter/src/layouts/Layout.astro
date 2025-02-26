@@ -4,6 +4,7 @@ interface Props {
 }
 
 const { title } = Astro.props;
+import "../styles/global.css";
 ---
 
 <!DOCTYPE html>
@@ -13,7 +14,7 @@ const { title } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
   </head>
-  <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
+  <body class="bg-[oklch(98.5_0.0011_164.7)] dark:bg-[oklch(18%_0.0045_174.5)] text-[oklch(18%_0.0045_174.5)] dark:text-[oklch(98.5_0.0011_164.7)] min-h-screen">
     <slot />
   </body>
 </html>
